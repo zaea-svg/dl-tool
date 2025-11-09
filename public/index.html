@@ -38,31 +38,26 @@
       if (!url.includes('borntobefuck.com')) return status.innerText = 'Lien invalide.';
 
       btn.disabled = true;
-      status.innerText = 'Envoi à GitHub Actions...';
+      status.innerText = 'Envoi au serveur...';
       progress.style.display = 'block';
       bar.style.width = '20%';
 
       try {
-        const token = 'TON_GITHUB_TOKEN';  // Remplace par ton token GitHub
-        const repo = 'zaea-svg/dl-tool';   // Ton dépôt
-        const res = await fetch(`https://api.github.com/repos/${repo}/dispatches`, {
+        const dispatchEndpoint = '/.netlify/functions/dispatch'; // Netlify Function endpoint
+        const res = await fetch(dispatchEndpoint, {
           method: 'POST',
           headers: {
-            'Authorization': `token ${token}`,
-            'Accept': 'application/vnd.github.v3+json',
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            event_type: 'download',
-            client_payload: { url }
-          })
+          body: JSON.stringify({ url })
         });
 
         if (res.ok) {
           status.innerText = '✅ Action lancée. Attends 1–2 min, puis vérifie les Releases.';
           bar.style.width = '100%';
         } else {
-          throw new Error('Dispatch échoué');
+          const text = await res.text();
+          throw new Error(text || 'Dispatch échoué');
         }
       } catch (e) {
         status.innerText = 'Erreur : ' + e.message;
