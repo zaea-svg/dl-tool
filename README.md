@@ -49,6 +49,6 @@
 Ouvre `public/index.html` et remplace ces deux lignes :
 
 ```js
-const token = 'TON_GITHUB_TOKEN';
+const token = 
 const repo = 'zaea-svg/dl-tool';
   
